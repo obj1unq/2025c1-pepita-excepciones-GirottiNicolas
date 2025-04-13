@@ -5,12 +5,25 @@ object pepita {
 		energia = energia + comida.energiaQueAporta()
 	}
 	
-	method volar(distancia) {
-		energia = energia - 10 - distancia
-	}
-		
 	method energia() {
 		return energia
+	}
+	method volar(distancia) {
+		energia = 
+				if (self.puedeVolar(distancia)) { 
+					self.energiaQueConsumeVolar(distancia) 
+				} else self.errorAlVolar()
+	}
+	method energiaQueConsumeVolar(distancia){
+		return energia - 10 - distancia
+	}
+
+	method puedeVolar(distancia) {
+		return self.energiaQueConsumeVolar(distancia) > 0
+	}
+
+	method errorAlVolar(){
+		assert.throwsException({"Pepita no tiene suficiente energia"})
 	}
 }
 
@@ -44,17 +57,43 @@ object manzana {
 
 object pepon {
 	var energia = 30
+	var ultimaComida = manzana
 	
 	method energia() {
 		return energia
 	}
 		
 	method comer(comida) {
-		energia += energia + comida.energiaQueAporta() / 2
+		energia += self.energiaDeComida(comida)
+		ultimaComida = comida
+
+	}
+	method energiaDeComida(comida){
+		return if (self.esComidaVariada(comida)) {energia + comida.energiaQueAporta() / 2} else self.errorAlComer()}
+
+	method esComidaVariada(comida){
+		return comida != ultimaComida
 	}
 		
 	method volar(distancia) {
-		energia = energia - 20 - 2*distancia
+		energia = 
+				if (self.puedeVolar(distancia)) { 
+					self.energiaQueConsumeVolar(distancia) 
+				} else self.errorAlVolar()
+	}
+	method energiaQueConsumeVolar(distancia){
+		return energia - 20 - 2*distancia
+	}
+
+	method puedeVolar(distancia) {
+		return self.energiaQueConsumeVolar(distancia) > 0
+	}
+	method errorAlVolar(){
+		assert.throwsException({"Pepon no tiene suficiente energia"})
+	}
+
+	method errorAlComer(){
+		assert.throwsException({"Pepon quiere comer variado"})
 	}
 	
 }
@@ -70,7 +109,11 @@ object roque {
 	
 	method alimentar(alimento) {
 		ave.comer(alimento)
-		cenas = cenas + 1
+		cenas += 1
+	}
+
+	method cenas(){
+		return cenas
 	}
 }
 
